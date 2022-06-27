@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
 (async () => {
@@ -11,7 +10,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   const port = process.env.PORT || 8082;
   
   // Use the body parser middleware for post requests
-  app.use(bodyParser.json());
+  app.use(express.json());
 
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
@@ -30,6 +29,20 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
+
+  app.get( "/filteredimage", async ( req, res ) => {
+    let image_url = req.query.image_url;
+    if (image_url) {
+      filterImageFromURL(image_url).then((response) => {
+        res.sendFile(response);
+        res.on('finish', function() {
+          deleteLocalFiles([response]);
+        });
+      });
+    } else {
+      res.status(404).send("Please send the correct image_url");
+    }
+  });
   
   // Root Endpoint
   // Displays a simple message to the user
