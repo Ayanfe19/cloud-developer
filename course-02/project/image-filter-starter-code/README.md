@@ -50,9 +50,9 @@ Add your own domain name and have it point to the running services (try adding a
 
 ### Project Enpoints
 
-EBS Application Endpoint
+# EBS Application Endpoint
 http://project-2-dev.us-west-2.elasticbeanstalk.com/
 
 
-Tested url
+# Tested url
 http://project-2-dev.us-west-2.elasticbeanstalk.com/filteredimage?image_url=https://picsum.photos/200/300
