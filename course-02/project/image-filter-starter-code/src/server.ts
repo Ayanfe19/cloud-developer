@@ -1,6 +1,7 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
-
+import {Request, Response} from 'express';
 (async () => {
 
   // Init the Express application
@@ -10,7 +11,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   const port = process.env.PORT || 8082;
   
   // Use the body parser middleware for post requests
-  app.use(express.json());
+  app.use(bodyParser.json());
 
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
@@ -28,21 +29,26 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   /**************************************************************************** */
 
-  //! END @TODO1
 
-  app.get( "/filteredimage", async ( req, res ) => {
-    let image_url = req.query.image_url;
-    if (image_url) {
-      filterImageFromURL(image_url).then((response) => {
-        res.sendFile(response);
-        res.on('finish', function() {
-          deleteLocalFiles([response]);
-        });
-      });
-    } else {
-      res.status(404).send("Please send the correct image_url");
+
+  app.get("/filteredimage/",async (req: Request,res: Response)=>{
+    let {image_url}: any = req.query;
+    if( !image_url ) {
+      return res.status(422)
+                .send(`Unprocessable entity`);
     }
-  });
+      else{
+        filterImageFromURL(image_url).then((result)=>{
+
+        res.sendFile(result);
+
+        
+        res.on(`finish`,()=>deleteLocalFiles([result]));
+
+        }).catch((err)=>res.status(422).send(err))
+      }
+  } );
+  //! END @TODO1
   
   // Root Endpoint
   // Displays a simple message to the user
