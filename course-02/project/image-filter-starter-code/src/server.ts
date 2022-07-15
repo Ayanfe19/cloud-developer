@@ -39,11 +39,13 @@ import {Request, Response} from 'express';
     }
       else{
         filterImageFromURL(image_url).then((result)=>{
-
-        res.sendFile(result);
+        res.status(200).sendFile(result, () => {
+            deleteLocalFiles([result]);
+        });
+        //res.sendFile(result);
 
         
-        res.on(`finish`,()=>deleteLocalFiles([result]));
+        //res.on(`finish`,()=>deleteLocalFiles([result]));
 
         }).catch((err)=>res.status(422).send(err))
       }
